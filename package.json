@@ -1,0 +1,37 @@
+{
+  "name": "todo-app-mern",
+  "version": "1.0.0",
+  "description": "Production-ready MERN Todo Application",
+  "private": true,
+  "scripts": {
+    "install": "npm install && cd server && npm install && cd ../client && npm install",
+    "start": "npm run start:server && npm run start:client",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "start:server": "cd server && npm start",
+    "start:client": "cd client && npm run preview",
+    "build:all": "npm run build:client && npm run build:server",
+    "build:server": "cd server && npm install",
+    "build:client": "cd client && npm install && npm run build",
+    "setup": "npm run install",
+    "heroku-postbuild": "npm run build:all"
+  },
+  "keywords": [
+    "mern",
+    "mongodb",
+    "express",
+    "react",
+    "node",
+    "todo"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.1"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}
