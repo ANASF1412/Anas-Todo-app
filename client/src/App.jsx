@@ -1,45 +1,40 @@
-import { useEffect, useState } from "react";
-import { TodoProvider } from "./context/TodoContext";
-import Home from "./pages/Home";
-import NotFound from "./pages/NotFound";
-import { checkHealth } from "./services/api";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import { ToastProvider } from "./context/ToastContext";
+import { ToastContainer } from "./components/Toast";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { LoginPage } from "./pages/Login";
+import { RegisterPage } from "./pages/Register";
+import { DashboardPage } from "./pages/Dashboard";
 
 function App() {
-  const [serverStatus, setServerStatus] = useState("checking");
-
-  useEffect(() => {
-    const checkServer = async () => {
-      try {
-        await checkHealth();
-        setServerStatus("connected");
-      } catch (error) {
-        console.error("Server connection failed:", error);
-        setServerStatus("disconnected");
-      }
-    };
-
-    checkServer();
-    const interval = setInterval(checkServer, 30000); // Check every 30 seconds
-
-    return () => clearInterval(interval);
-  }, []);
-
   return (
-    <TodoProvider>
-      {serverStatus === "disconnected" && (
-        <div className="fixed top-4 right-4 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-50">
-          ⚠️ Server is offline. Please check your connection.
-        </div>
-      )}
+    <Router>
+      <AuthProvider>
+        <ToastProvider>
+          <ToastContainer />
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
 
-      {serverStatus === "connected" && (
-        <div className="fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-pulse">
-          ✓ Connected
-        </div>
-      )}
+            {/* Protected Routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
 
-      <Home />
-    </TodoProvider>
+            {/* Redirect */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </ToastProvider>
+      </AuthProvider>
+    </Router>
   );
 }
 
